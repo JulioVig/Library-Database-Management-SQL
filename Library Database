@@ -1,0 +1,85 @@
+-- initiating the database
+CREATE DATABASE public_library;
+USE public_library;
+
+/* readers table contains information that a receptionist asks for 
+when creating a new member account */
+
+CREATE TABLE readers
+	(
+		reader_id VARCHAR(6),
+        fname VARCHAR(30),
+        mname VARCHAR(30),
+        ltname VARCHAR (30),
+        city VARCHAR(15),
+        mobilenum VARCHAR(10),
+        town_res BOOLEAN,
+        dob DATE,
+        CONSTRAINT readers_pk PRIMARY KEY(reader_id)
+	);
+    
+INSERT INTO readers VALUES('C00001','John',null,'Morrison','West New York','2018649878',TRUE,'1998-05-22');
+INSERT INTO readers VALUES('C00002','Elsa','Smith','Johnson','Orange','5514657845',FALSE,'2000-07-28');
+INSERT INTO readers VALUES('C00003','Bryan','Errol','Weston','North Bergen','7625457891',FALSE,'2000-04-16');
+INSERT INTO readers VALUES('C00004','Kevin',null,'Rodriguez','West New York','2014001648',TRUE,'1970-04-22');
+INSERT INTO readers VALUES('C00005','Victor','Errol','Sierra','Jersey City','2014564567',FALSE,'1978-05-03');
+INSERT INTO readers VALUES('C00006','Brian','Costa','Delgado','West New York','2016657895',TRUE,'2001-07-12');
+INSERT INTO readers VALUES('C00007','Ashley',null,'Smith','Orange','5516014597',FALSE,'1998-04-20');
+INSERT INTO readers VALUES('C00008','Rick','James','Gomez','Union City','7624557894',FALSE,'2003-12-24');
+INSERT INTO readers VALUES('C00009','Riley','Hannah','Blue','North Bergen','5512236578',FALSE,'1995-11-01');
+INSERT INTO readers VALUES('C00010','Kiara','Cole','Reese','Jersey City','2017842199',FALSE,'2000-06-15');
+
+-- book table stores every unique entry the library has to offer
+CREATE TABLE book
+	(
+	book_id VARCHAR(6),
+    title VARCHAR(40),
+    domain VARCHAR(30),
+    CONSTRAINT book_bookID_pk PRIMARY KEY(book_id)
+	);
+
+INSERT INTO book VALUES('B00001','The Cat in the Hat','Story');
+INSERT INTO book VALUES('B00002','Horton Hears A Who!','Story');
+INSERT INTO book VALUES('B00003','Stuart Little','Story');
+
+-- contains old and current accounts of active members
+CREATE TABLE active_readers
+	(
+		account_id VARCHAR(6),
+        reader_id VARCHAR(6),
+        book_id VARCHAR(6),
+        acc_type VARCHAR(10),
+        acc_status VARCHAR(10),
+        CONSTRAINT activereaders_accnum_pk PRIMARY KEY(account_id),
+        CONSTRAINT account_readerid_fk FOREIGN KEY(reader_id) REFERENCES readers(reader_id),
+        CONSTRAINT account_bookID_fk FOREIGN KEY(book_id) REFERENCES book(book_id)
+	);
+    
+    INSERT INTO active_readers VALUES('A00001','C00001','B00001','Premium','Active');
+    INSERT INTO active_readers VALUES('A00002','C00002','B00002','Regular','Active');
+    INSERT INTO active_readers VALUES('A00003','C00003','B00002','Premium','Active');
+    INSERT INTO active_readers VALUES('A00004','C00002','B00003','Premium','Active');
+    INSERT INTO active_readers VALUES('A00005','C00006','B00002','Regular','Active');
+    INSERT INTO active_readers VALUES('A00006','C00007','B00001','Premium','Suspended');
+    INSERT INTO active_readers VALUES('A00007','C00007','B00001','Premium','Active');
+    INSERT INTO active_readers VALUES('A00008','C00001','B00003','Premium','Terminated');
+    INSERT INTO active_readers VALUES('A00009','C00003','B00002','Regular','Terminated');
+    INSERT INTO active_readers VALUES('A00010','C00004','B00002','Premium','Active');
+    
+-- table contains tracking records
+    CREATE TABLE bookissue_details
+    (
+		issue_number VARCHAR(6),
+        account_id VARCHAR(6),
+        book_id VARCHAR(20),
+        bookname VARCHAR(50),
+        number_of_book_issued INT(7),
+        CONSTRAINT transactioninfo_number_pk PRIMARY KEY(issue_number),
+        CONSTRAINT transactioninfo_accnum_fk FOREIGN KEY(account_id) REFERENCES active_readers(account_id)
+	);
+    
+    INSERT INTO bookissue_details VALUES('T00001','A00001','B00001','The Cat in the Hat',1678902);
+    INSERT INTO bookissue_details VALUES('T00002','A00001','B00002','Horton Hears A Who!',4562457);
+    INSERT INTO bookissue_details VALUES('T00003','A00002','B00001','The Cat in the Hat',1678902);
+    INSERT INTO bookissue_details VALUES('T00004','A00002','B00003','Stuart Little',7093041);
+    
